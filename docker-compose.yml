@@ -1,0 +1,20 @@
+services:
+  volthub-db:
+    image: postgres:18-alpine
+    container_name: volthub-db
+    environment:
+      POSTGRES_DB: volthub
+      POSTGRES_USER: volthub
+      POSTGRES_PASSWORD: volthub_dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - volthub_pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U volthub -d volthub"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  volthub_pgdata:

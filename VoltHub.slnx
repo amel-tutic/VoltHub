@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/VoltHub.Api/VoltHub.Api.csproj" />
+    <Project Path="src/VoltHub.Application/VoltHub.Application.csproj" />
+    <Project Path="src/VoltHub.Domain/VoltHub.Domain.csproj" />
+    <Project Path="src/VoltHub.Infrastructure/VoltHub.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/VoltHub.IntegrationTests/VoltHub.IntegrationTests.csproj" />
+    <Project Path="tests/VoltHub.UnitTests/VoltHub.UnitTests.csproj" />
+  </Folder>
+</Solution>
