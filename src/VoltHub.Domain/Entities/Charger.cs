@@ -40,7 +40,7 @@ public sealed class Charger : BaseEntity
         if (pricePerKwh < 0)
             throw new ArgumentOutOfRangeException(nameof(pricePerKwh), "Price cannot be negative.");
 
-        return new Charger(Guid.NewGuid(), code.Trim(), connectorType, currentType, powerKw, pricePerKwh, stationId);
+        return new Charger(Guid.CreateVersion7(), code.Trim(), connectorType, currentType, powerKw, pricePerKwh, stationId);
     }
 
     public void SetStatus(ChargerStatus status)

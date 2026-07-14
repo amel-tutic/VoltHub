@@ -38,7 +38,7 @@ public sealed class Reservation : BaseEntity
         if (startTime < DateTime.UtcNow)
             throw new ArgumentException("Start time cannot be in the past.", nameof(startTime));
 
-        return new Reservation(Guid.NewGuid(), startTime, endTime, userId, vehicleId, chargerId);
+        return new Reservation(Guid.CreateVersion7(), startTime, endTime, userId, vehicleId, chargerId);
     }
 
     public void Cancel()

@@ -33,7 +33,7 @@ public sealed class ProblemReport : BaseEntity
         if (string.IsNullOrWhiteSpace(description))
             throw new ArgumentException("Description is required.", nameof(description));
 
-        return new ProblemReport(Guid.NewGuid(), type, description.Trim(), stationId, chargerId, userId);
+        return new ProblemReport(Guid.CreateVersion7(), type, description.Trim(), stationId, chargerId, userId);
     }
 
     public void MarkInProgress()

@@ -29,7 +29,7 @@ public sealed class MaintenanceRecord : BaseEntity
         if (string.IsNullOrWhiteSpace(description))
             throw new ArgumentException("Description is required.", nameof(description));
 
-        return new MaintenanceRecord(Guid.NewGuid(), type, description.Trim(), scheduledDate, chargerId);
+        return new MaintenanceRecord(Guid.CreateVersion7(), type, description.Trim(), scheduledDate, chargerId);
     }
 
     public void Resolve()

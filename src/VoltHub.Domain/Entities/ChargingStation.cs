@@ -39,7 +39,7 @@ public sealed class ChargingStation : BaseEntity
         if (longitude is < -180 or > 180)
             throw new ArgumentOutOfRangeException(nameof(longitude), "Longitude must be between -180 and 180.");
 
-        return new ChargingStation(Guid.NewGuid(), name.Trim(), address.Trim(), city.Trim(), latitude, longitude, description?.Trim());
+        return new ChargingStation(Guid.CreateVersion7(), name.Trim(), address.Trim(), city.Trim(), latitude, longitude, description?.Trim());
     }
 
     public void UpdateDetails(string name, string address, string city, double latitude, double longitude, string? description)

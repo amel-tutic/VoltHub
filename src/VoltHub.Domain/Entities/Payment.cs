@@ -27,7 +27,7 @@ public sealed class Payment : BaseEntity
         if (amount < 0)
             throw new ArgumentOutOfRangeException(nameof(amount), "Amount cannot be negative.");
 
-        return new Payment(Guid.NewGuid(), method, amount, invoiceId);
+        return new Payment(Guid.CreateVersion7(), method, amount, invoiceId);
     }
 
     public void Complete()

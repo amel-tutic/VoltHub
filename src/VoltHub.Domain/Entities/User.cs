@@ -38,7 +38,7 @@ public sealed class User : BaseEntity
         if (string.IsNullOrWhiteSpace(passwordHash))
             throw new ArgumentException("Password hash is required.", nameof(passwordHash));
 
-        return new User(Guid.NewGuid(), firstName.Trim(), lastName.Trim(), email.Trim().ToLowerInvariant(), passwordHash, role);
+        return new User(Guid.CreateVersion7(), firstName.Trim(), lastName.Trim(), email.Trim().ToLowerInvariant(), passwordHash, role);
     }
 
     public void Deactivate() => IsActive = false;

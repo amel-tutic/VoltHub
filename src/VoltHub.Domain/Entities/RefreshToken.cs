@@ -31,7 +31,7 @@ public sealed class RefreshToken : BaseEntity
         if (expiresAt <= DateTime.UtcNow)
             throw new ArgumentException("Expiry must be in the future.", nameof(expiresAt));
 
-        return new RefreshToken(Guid.NewGuid(), token, expiresAt, userId);
+        return new RefreshToken(Guid.CreateVersion7(), token, expiresAt, userId);
     }
 
     public void Revoke()

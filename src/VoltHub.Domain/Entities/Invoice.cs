@@ -34,7 +34,7 @@ public sealed class Invoice : BaseEntity
         if (amount < 0)
             throw new ArgumentOutOfRangeException(nameof(amount), "Amount cannot be negative.");
 
-        return new Invoice(Guid.NewGuid(), invoiceNumber, amount, sessionId, userId);
+        return new Invoice(Guid.CreateVersion7(), invoiceNumber, amount, sessionId, userId);
     }
 
     public void MarkPaid()

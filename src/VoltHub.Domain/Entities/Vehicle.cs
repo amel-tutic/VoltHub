@@ -34,7 +34,7 @@ public sealed class Vehicle : BaseEntity
         if (batteryCapacityKwh <= 0)
             throw new ArgumentOutOfRangeException(nameof(batteryCapacityKwh), "Battery capacity must be greater than zero.");
 
-        return new Vehicle(Guid.NewGuid(), make.Trim(), model.Trim(), batteryCapacityKwh, connectorType, userId);
+        return new Vehicle(Guid.CreateVersion7(), make.Trim(), model.Trim(), batteryCapacityKwh, connectorType, userId);
     }
 
     public void UpdateDetails(string make, string model, decimal batteryCapacityKwh, ConnectorType connectorType)

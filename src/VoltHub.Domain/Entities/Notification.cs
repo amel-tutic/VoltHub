@@ -32,7 +32,7 @@ public sealed class Notification : BaseEntity
         if (string.IsNullOrWhiteSpace(message))
             throw new ArgumentException("Message is required.", nameof(message));
 
-        return new Notification(Guid.NewGuid(), type, title.Trim(), message.Trim(), userId);
+        return new Notification(Guid.CreateVersion7(), type, title.Trim(), message.Trim(), userId);
     }
 
     public void MarkAsRead() => IsRead = true;

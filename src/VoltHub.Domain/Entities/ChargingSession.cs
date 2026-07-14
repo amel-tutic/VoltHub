@@ -39,7 +39,7 @@ public sealed class ChargingSession : BaseEntity
         if (pricePerKwh < 0)
             throw new ArgumentOutOfRangeException(nameof(pricePerKwh), "Price cannot be negative.");
 
-        return new ChargingSession(Guid.NewGuid(), pricePerKwh, userId, vehicleId, chargerId, reservationId);
+        return new ChargingSession(Guid.CreateVersion7(), pricePerKwh, userId, vehicleId, chargerId, reservationId);
     }
 
     // Rule #4 (energy simulation): energy is capped by whichever limit binds first — what the

@@ -29,6 +29,6 @@ public sealed class Rating : BaseEntity
         if (score is < 1 or > 5)
             throw new ArgumentOutOfRangeException(nameof(score), "Score must be between 1 and 5.");
 
-        return new Rating(Guid.NewGuid(), score, comment?.Trim(), stationId, userId);
+        return new Rating(Guid.CreateVersion7(), score, comment?.Trim(), stationId, userId);
     }
 }
