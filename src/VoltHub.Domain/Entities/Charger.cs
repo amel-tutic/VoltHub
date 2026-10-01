@@ -1,8 +1,10 @@
-﻿using VoltHub.Domain.Common;
+using VoltHub.Domain.Common;
 using VoltHub.Domain.Enums;
 
 namespace VoltHub.Domain.Entities;
 
+// Service dates are not stored here: the last and next service dates are derived from this
+// charger's MaintenanceRecords, so there is a single source of truth for maintenance data.
 public sealed class Charger : BaseEntity
 {
     public string Code { get; private set; } = default!;
@@ -11,10 +13,10 @@ public sealed class Charger : BaseEntity
     public decimal PowerKw { get; private set; }
     public decimal PricePerKwh { get; private set; }
     public ChargerStatus Status { get; private set; }
-    public DateTime? LastServiceDate { get; private set; }
-    public DateTime? NextServiceDate { get; private set; }
+    public DateTime StatusChangedAt { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public Guid StationId { get; private set; }
+    public ChargingStation Station { get; private set; } = default!;
 
     private Charger() { }
 
@@ -29,6 +31,7 @@ public sealed class Charger : BaseEntity
         Status = ChargerStatus.Available;
         StationId = stationId;
         CreatedAt = DateTime.UtcNow;
+        StatusChangedAt = CreatedAt;
     }
 
     public static Charger Create(string code, ConnectorType connectorType, CurrentType currentType, decimal powerKw, decimal pricePerKwh, Guid stationId)
@@ -50,7 +53,13 @@ public sealed class Charger : BaseEntity
                 $"Operators cannot set status to '{status}' directly; Occupied/Reserved are derived from active sessions/reservations.",
                 nameof(status));
 
+        // Re-submitting the current status must not restart the clock that the
+        // "out of operation for too long" notification rule measures from.
+        if (status == Status)
+            return;
+
         Status = status;
+        StatusChangedAt = DateTime.UtcNow;
     }
 
     public void SetPrice(decimal pricePerKwh)
@@ -59,11 +68,5 @@ public sealed class Charger : BaseEntity
             throw new ArgumentOutOfRangeException(nameof(pricePerKwh), "Price cannot be negative.");
 
         PricePerKwh = pricePerKwh;
-    }
-
-    public void RecordService(DateTime serviceDate, DateTime? nextServiceDate = null)
-    {
-        LastServiceDate = serviceDate;
-        NextServiceDate = nextServiceDate;
     }
 }

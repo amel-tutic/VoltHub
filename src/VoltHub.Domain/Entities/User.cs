@@ -1,4 +1,4 @@
-﻿using VoltHub.Domain.Common;
+using VoltHub.Domain.Common;
 using VoltHub.Domain.Enums;
 
 namespace VoltHub.Domain.Entities;
@@ -37,6 +37,8 @@ public sealed class User : BaseEntity
             throw new ArgumentException("A valid email is required.", nameof(email));
         if (string.IsNullOrWhiteSpace(passwordHash))
             throw new ArgumentException("Password hash is required.", nameof(passwordHash));
+            // Only checks that *a* hash was supplied — BCrypt hashing and password-strength
+            // policy live in Infrastructure/Application, not here.
 
         return new User(Guid.CreateVersion7(), firstName.Trim(), lastName.Trim(), email.Trim().ToLowerInvariant(), passwordHash, role);
     }
@@ -63,3 +65,4 @@ public sealed class User : BaseEntity
         PasswordHash = newPasswordHash;
     }
 }
+

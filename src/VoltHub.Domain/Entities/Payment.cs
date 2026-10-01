@@ -1,4 +1,4 @@
-﻿using VoltHub.Domain.Common;
+using VoltHub.Domain.Common;
 using VoltHub.Domain.Enums;
 
 namespace VoltHub.Domain.Entities;
@@ -10,6 +10,7 @@ public sealed class Payment : BaseEntity
     public PaymentStatus Status { get; private set; }
     public DateTime? PaidAt { get; private set; }
     public Guid InvoiceId { get; private set; }
+    public Invoice Invoice { get; private set; } = default!;
 
     private Payment() { }
 
@@ -45,3 +46,4 @@ public sealed class Payment : BaseEntity
         Status = PaymentStatus.Failed;
     }
 }
+

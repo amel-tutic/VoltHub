@@ -1,4 +1,4 @@
-﻿using VoltHub.Domain.Common;
+using VoltHub.Domain.Common;
 using VoltHub.Domain.Enums;
 
 namespace VoltHub.Domain.Entities;
@@ -10,30 +10,31 @@ public sealed class ProblemReport : BaseEntity
     public ProblemStatus Status { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? ResolvedAt { get; private set; }
-    public Guid StationId { get; private set; }
-    public Guid? ChargerId { get; private set; }
+    public Guid ChargerId { get; private set; }
+    public Charger Charger { get; private set; } = default!;
     public Guid UserId { get; private set; }
+    public User User { get; private set; } = default!;
 
     private ProblemReport() { }
 
-    private ProblemReport(Guid id, ProblemType type, string description, Guid stationId, Guid? chargerId, Guid userId)
+    private ProblemReport(Guid id, ProblemType type, string description, Guid chargerId, Guid userId)
     {
         Id = id;
         Type = type;
         Description = description;
         Status = ProblemStatus.Open;
-        StationId = stationId;
         ChargerId = chargerId;
         UserId = userId;
         CreatedAt = DateTime.UtcNow;
     }
 
-    public static ProblemReport Create(ProblemType type, string description, Guid stationId, Guid userId, Guid? chargerId = null)
+    // Every report concerns a specific charger; the station is reached through it.
+    public static ProblemReport Create(ProblemType type, string description, Guid chargerId, Guid userId)
     {
         if (string.IsNullOrWhiteSpace(description))
             throw new ArgumentException("Description is required.", nameof(description));
 
-        return new ProblemReport(Guid.CreateVersion7(), type, description.Trim(), stationId, chargerId, userId);
+        return new ProblemReport(Guid.CreateVersion7(), type, description.Trim(), chargerId, userId);
     }
 
     public void MarkInProgress()

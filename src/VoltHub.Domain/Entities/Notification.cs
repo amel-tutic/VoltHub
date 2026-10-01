@@ -1,4 +1,4 @@
-﻿using VoltHub.Domain.Common;
+using VoltHub.Domain.Common;
 using VoltHub.Domain.Enums;
 
 namespace VoltHub.Domain.Entities;
@@ -11,6 +11,7 @@ public sealed class Notification : BaseEntity
     public bool IsRead { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public Guid UserId { get; private set; }
+    public User User { get; private set; } = default!;
 
     private Notification() { }
 
@@ -37,3 +38,4 @@ public sealed class Notification : BaseEntity
 
     public void MarkAsRead() => IsRead = true;
 }
+

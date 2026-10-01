@@ -1,4 +1,4 @@
-﻿using VoltHub.Domain.Common;
+using VoltHub.Domain.Common;
 using VoltHub.Domain.Enums;
 
 namespace VoltHub.Domain.Entities;
@@ -11,6 +11,7 @@ public sealed class Vehicle : BaseEntity
     public ConnectorType ConnectorType { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public Guid UserId { get; private set; }
+    public User User { get; private set; } = default!;
 
     private Vehicle() { }
 
@@ -52,3 +53,4 @@ public sealed class Vehicle : BaseEntity
         ConnectorType = connectorType;
     }
 }
+

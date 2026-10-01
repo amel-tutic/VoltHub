@@ -1,4 +1,4 @@
-﻿using VoltHub.Domain.Common;
+using VoltHub.Domain.Common;
 using VoltHub.Domain.Enums;
 
 namespace VoltHub.Domain.Entities;
@@ -11,6 +11,7 @@ public sealed class MaintenanceRecord : BaseEntity
     public DateTime? ResolvedAt { get; private set; }
     public DateTime? ScheduledDate { get; private set; }
     public Guid ChargerId { get; private set; }
+    public Charger Charger { get; private set; } = default!;
 
     private MaintenanceRecord() { }
 
@@ -39,3 +40,4 @@ public sealed class MaintenanceRecord : BaseEntity
         ResolvedAt = DateTime.UtcNow;
     }
 }
+

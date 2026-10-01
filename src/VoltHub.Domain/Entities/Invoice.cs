@@ -1,4 +1,4 @@
-﻿using VoltHub.Domain.Common;
+using VoltHub.Domain.Common;
 using VoltHub.Domain.Enums;
 
 namespace VoltHub.Domain.Entities;
@@ -10,11 +10,11 @@ public sealed class Invoice : BaseEntity
     public DateTime IssuedAt { get; private set; }
     public InvoiceStatus Status { get; private set; }
     public Guid SessionId { get; private set; }
-    public Guid UserId { get; private set; }
+    public ChargingSession Session { get; private set; } = default!;
 
     private Invoice() { }
 
-    private Invoice(Guid id, string invoiceNumber, decimal amount, Guid sessionId, Guid userId)
+    private Invoice(Guid id, string invoiceNumber, decimal amount, Guid sessionId)
     {
         Id = id;
         InvoiceNumber = invoiceNumber;
@@ -22,19 +22,19 @@ public sealed class Invoice : BaseEntity
         IssuedAt = DateTime.UtcNow;
         Status = InvoiceStatus.Pending;
         SessionId = sessionId;
-        UserId = userId;
     }
 
+    // The invoiced user is reached through the session (session -> reservation -> vehicle).
     // invoiceNumber ("VH-2026-000123") is passed in rather than generated here: a sequential,
     // collision-free number needs a database round-trip, which is Infrastructure's job.
-    public static Invoice Create(string invoiceNumber, decimal amount, Guid sessionId, Guid userId)
+    public static Invoice Create(string invoiceNumber, decimal amount, Guid sessionId)
     {
         if (string.IsNullOrWhiteSpace(invoiceNumber))
             throw new ArgumentException("Invoice number is required.", nameof(invoiceNumber));
         if (amount < 0)
             throw new ArgumentOutOfRangeException(nameof(amount), "Amount cannot be negative.");
 
-        return new Invoice(Guid.CreateVersion7(), invoiceNumber, amount, sessionId, userId);
+        return new Invoice(Guid.CreateVersion7(), invoiceNumber, amount, sessionId);
     }
 
     public void MarkPaid()

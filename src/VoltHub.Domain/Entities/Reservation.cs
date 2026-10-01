@@ -1,4 +1,4 @@
-﻿using VoltHub.Domain.Common;
+using VoltHub.Domain.Common;
 using VoltHub.Domain.Enums;
 
 namespace VoltHub.Domain.Entities;
@@ -9,36 +9,36 @@ public sealed class Reservation : BaseEntity
     public DateTime EndTime { get; private set; }
     public ReservationStatus Status { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public Guid UserId { get; private set; }
     public Guid VehicleId { get; private set; }
+    public Vehicle Vehicle { get; private set; } = default!;
     public Guid ChargerId { get; private set; }
+    public Charger Charger { get; private set; } = default!;
 
     private Reservation() { }
 
-    private Reservation(Guid id, DateTime startTime, DateTime endTime, Guid userId, Guid vehicleId, Guid chargerId)
+    private Reservation(Guid id, DateTime startTime, DateTime endTime, Guid vehicleId, Guid chargerId)
     {
         Id = id;
         StartTime = startTime;
         EndTime = endTime;
         Status = ReservationStatus.Active;
-        UserId = userId;
         VehicleId = vehicleId;
         ChargerId = chargerId;
         CreatedAt = DateTime.UtcNow;
     }
 
-    // Only enforces what a single Reservation can validate about itself. The other half of
-    // business rule #1 — no two Active reservations may overlap on the same charger — needs
-    // to compare against other rows, so it lives in the Application-layer handler and the
-    // PostgreSQL exclusion constraint (S4), not here.
-    public static Reservation Create(DateTime startTime, DateTime endTime, Guid userId, Guid vehicleId, Guid chargerId)
+    // The reserving user is reached through the vehicle (Vehicle.UserId); storing it here too
+    // would duplicate that relationship. Only rules a single Reservation can check about itself
+    // live here — "no overlapping Active slots per charger and per vehicle" compares rows, so it
+    // lives in the Application handler and the PostgreSQL exclusion constraints.
+    public static Reservation Create(DateTime startTime, DateTime endTime, Guid vehicleId, Guid chargerId)
     {
         if (endTime <= startTime)
             throw new ArgumentException("End time must be after start time.", nameof(endTime));
         if (startTime < DateTime.UtcNow)
             throw new ArgumentException("Start time cannot be in the past.", nameof(startTime));
 
-        return new Reservation(Guid.CreateVersion7(), startTime, endTime, userId, vehicleId, chargerId);
+        return new Reservation(Guid.CreateVersion7(), startTime, endTime, vehicleId, chargerId);
     }
 
     public void Cancel()

@@ -1,34 +1,46 @@
-﻿using VoltHub.Domain.Common;
-
 namespace VoltHub.Domain.Entities;
 
-public sealed class Rating : BaseEntity
+// Maps the M:N "rates" relationship between User and ChargingStation. Its identity IS the
+// (UserId, StationId) pair — a composite primary key — so "at most one rating per user per
+// station" is guaranteed by the key itself. That is why it has no surrogate Id / BaseEntity.
+public sealed class Rating
 {
+    public Guid UserId { get; private set; }
+    public User User { get; private set; } = default!;
+    public Guid StationId { get; private set; }
+    public ChargingStation Station { get; private set; } = default!;
     public int Score { get; private set; }
     public string? Comment { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public Guid StationId { get; private set; }
-    public Guid UserId { get; private set; }
 
     private Rating() { }
 
-    private Rating(Guid id, int score, string? comment, Guid stationId, Guid userId)
+    private Rating(Guid userId, Guid stationId, int score, string? comment)
     {
-        Id = id;
+        UserId = userId;
+        StationId = stationId;
         Score = score;
         Comment = comment;
-        StationId = stationId;
-        UserId = userId;
         CreatedAt = DateTime.UtcNow;
     }
 
-    // One-rating-per-(user,station) is a cross-row uniqueness rule — enforced by a DB
-    // UNIQUE(station_id, user_id) constraint in the EF configuration, not checkable here.
-    public static Rating Create(int score, Guid stationId, Guid userId, string? comment = null)
+    public static Rating Create(Guid userId, Guid stationId, int score, string? comment = null)
+    {
+        EnsureValidScore(score);
+        return new Rating(userId, stationId, score, comment?.Trim());
+    }
+
+    // Re-rating a station updates the existing row instead of adding a second one.
+    public void Update(int score, string? comment)
+    {
+        EnsureValidScore(score);
+        Score = score;
+        Comment = comment?.Trim();
+    }
+
+    private static void EnsureValidScore(int score)
     {
         if (score is < 1 or > 5)
             throw new ArgumentOutOfRangeException(nameof(score), "Score must be between 1 and 5.");
-
-        return new Rating(Guid.CreateVersion7(), score, comment?.Trim(), stationId, userId);
     }
 }

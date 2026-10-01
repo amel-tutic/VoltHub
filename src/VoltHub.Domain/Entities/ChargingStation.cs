@@ -1,4 +1,4 @@
-﻿using VoltHub.Domain.Common;
+using VoltHub.Domain.Common;
 
 namespace VoltHub.Domain.Entities;
 
@@ -63,3 +63,4 @@ public sealed class ChargingStation : BaseEntity
         Description = description?.Trim();
     }
 }
+
