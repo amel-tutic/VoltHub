@@ -25,7 +25,6 @@ public sealed class RefreshToken : BaseEntity
         CreatedAt = DateTime.UtcNow;
     }
 
-    // Stores only a SHA-256 hash of the token the client receives, so a leaked row can't be replayed.
     public static RefreshToken Create(string tokenHash, DateTime expiresAt, Guid userId)
     {
         if (string.IsNullOrWhiteSpace(tokenHash))

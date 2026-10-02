@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using VoltHub.Api.Contracts;
 using VoltHub.Application.Common.Results;
 
 namespace VoltHub.Api.Controllers;
@@ -6,6 +7,18 @@ namespace VoltHub.Api.Controllers;
 [ApiController]
 public abstract class ApiController : ControllerBase
 {
+    // 200 with the value, or an RFC 7807 problem.
+    protected IActionResult FromResult<T>(Result<T> result) =>
+        result.IsSuccess ? Ok(result.Value) : Problem(result.Error!);
+
+    // 204 No Content, or an RFC 7807 problem.
+    protected IActionResult FromResult(Result result) =>
+        result.IsSuccess ? NoContent() : Problem(result.Error!);
+
+    // 201 Created with the new id, or an RFC 7807 problem.
+    protected IActionResult FromCreated(Result<Guid> result) =>
+        result.IsSuccess ? StatusCode(StatusCodes.Status201Created, new CreatedResponse(result.Value)) : Problem(result.Error!);
+
     // Turns an expected business failure into an RFC 7807 problem response.
     protected ObjectResult Problem(Error error) => Problem(
         detail: error.Message,

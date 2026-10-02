@@ -12,6 +12,7 @@ public sealed class VoltHubDbContext(DbContextOptions<VoltHubDbContext> options)
     private static readonly Dictionary<string, string> ConflictMessages = new()
     {
         ["ix_users_email"] = "An account with this email already exists.",
+        ["ix_chargers_station_id_code"] = "A charger with this code already exists at this station.",
         ["ex_reservations_charger_overlap"] = "The charger is already reserved for an overlapping time slot.",
         ["ex_reservations_vehicle_overlap"] = "This vehicle already has a reservation in an overlapping time slot."
     };

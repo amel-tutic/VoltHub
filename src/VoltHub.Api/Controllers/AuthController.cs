@@ -16,34 +16,22 @@ public sealed class AuthController(ISender sender) : ApiController
     [AllowAnonymous]
     [EnableRateLimiting("auth")]
     public async Task<IActionResult> Register(RegisterCommand command, CancellationToken cancellationToken)
-    {
-        var result = await sender.Send(command, cancellationToken);
-        return result.IsSuccess ? Ok(result.Value) : Problem(result.Error!);
-    }
+        => FromResult(await sender.Send(command, cancellationToken));
 
     [HttpPost("login")]
     [AllowAnonymous]
     [EnableRateLimiting("auth")]
     public async Task<IActionResult> Login(LoginCommand command, CancellationToken cancellationToken)
-    {
-        var result = await sender.Send(command, cancellationToken);
-        return result.IsSuccess ? Ok(result.Value) : Problem(result.Error!);
-    }
+        => FromResult(await sender.Send(command, cancellationToken));
 
     [HttpPost("refresh")]
     [AllowAnonymous]
     [EnableRateLimiting("auth")]
     public async Task<IActionResult> Refresh(RefreshTokenCommand command, CancellationToken cancellationToken)
-    {
-        var result = await sender.Send(command, cancellationToken);
-        return result.IsSuccess ? Ok(result.Value) : Problem(result.Error!);
-    }
+        => FromResult(await sender.Send(command, cancellationToken));
 
     [HttpGet("me")]
     [Authorize]
     public async Task<IActionResult> Me(CancellationToken cancellationToken)
-    {
-        var result = await sender.Send(new GetMeQuery(), cancellationToken);
-        return result.IsSuccess ? Ok(result.Value) : Problem(result.Error!);
-    }
+        => FromResult(await sender.Send(new GetMeQuery(), cancellationToken));
 }
