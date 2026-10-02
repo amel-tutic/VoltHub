@@ -8,5 +8,6 @@ public sealed record ChargerRequest(string Code, ConnectorType ConnectorType, Cu
 public sealed record ChargerPriceRequest(decimal PricePerKwh);
 public sealed record ChargerStatusRequest(ChargerStatus Status);
 public sealed record VehicleRequest(string Make, string Model, decimal BatteryCapacityKwh, ConnectorType ConnectorType);
+public sealed record PayInvoiceRequest(PaymentMethod Method);
 
 public sealed record CreatedResponse(Guid Id);
