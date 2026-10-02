@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VoltHub.Application.Common.Interfaces;
 using VoltHub.Infrastructure.Authentication;
+using VoltHub.Infrastructure.BackgroundJobs;
 using VoltHub.Infrastructure.Persistence;
 
 namespace VoltHub.Infrastructure;
@@ -22,6 +23,8 @@ public static class DependencyInjection
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
         services.AddSingleton<ITokenService, TokenService>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
+
+        services.AddHostedService<ReservationExpiryService>();
 
         return services;
     }

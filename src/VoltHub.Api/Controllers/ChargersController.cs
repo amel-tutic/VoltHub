@@ -5,6 +5,7 @@ using VoltHub.Api.Contracts;
 using VoltHub.Application.Chargers.SetChargerPrice;
 using VoltHub.Application.Chargers.SetChargerStatus;
 using VoltHub.Application.Common.Security;
+using VoltHub.Application.Reservations.GetChargerSchedule;
 
 namespace VoltHub.Api.Controllers;
 
@@ -21,4 +22,9 @@ public sealed class ChargersController(ISender sender) : ApiController
     [Authorize(Roles = Roles.Staff)]
     public async Task<IActionResult> SetStatus(Guid id, ChargerStatusRequest request, CancellationToken cancellationToken)
         => FromResult(await sender.Send(new SetChargerStatusCommand(id, request.Status), cancellationToken));
+
+    [HttpGet("{id:guid}/schedule")]
+    public async Task<IActionResult> Schedule(
+        Guid id, [FromQuery] DateTimeOffset? from, [FromQuery] DateTimeOffset? to, CancellationToken cancellationToken)
+        => FromResult(await sender.Send(new GetChargerScheduleQuery(id, from, to), cancellationToken));
 }

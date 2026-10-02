@@ -5,6 +5,9 @@ namespace VoltHub.Domain.Entities;
 
 public sealed class Reservation : BaseEntity
 {
+    // A "book now" request reaches the server a moment after it was made; tolerate that much.
+    private static readonly TimeSpan StartGracePeriod = TimeSpan.FromMinutes(5);
+
     public DateTime StartTime { get; private set; }
     public DateTime EndTime { get; private set; }
     public ReservationStatus Status { get; private set; }
@@ -35,7 +38,7 @@ public sealed class Reservation : BaseEntity
     {
         if (endTime <= startTime)
             throw new ArgumentException("End time must be after start time.", nameof(endTime));
-        if (startTime < DateTime.UtcNow)
+        if (startTime < DateTime.UtcNow - StartGracePeriod)
             throw new ArgumentException("Start time cannot be in the past.", nameof(startTime));
 
         return new Reservation(Guid.CreateVersion7(), startTime, endTime, vehicleId, chargerId);

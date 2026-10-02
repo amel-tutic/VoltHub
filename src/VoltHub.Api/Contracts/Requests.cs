@@ -7,5 +7,6 @@ public sealed record StationRequest(string Name, string Address, string City, do
 public sealed record ChargerRequest(string Code, ConnectorType ConnectorType, CurrentType CurrentType, decimal PowerKw, decimal PricePerKwh);
 public sealed record ChargerPriceRequest(decimal PricePerKwh);
 public sealed record ChargerStatusRequest(ChargerStatus Status);
+public sealed record VehicleRequest(string Make, string Model, decimal BatteryCapacityKwh, ConnectorType ConnectorType);
 
 public sealed record CreatedResponse(Guid Id);
