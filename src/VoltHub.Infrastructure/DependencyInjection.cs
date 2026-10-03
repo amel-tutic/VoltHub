@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VoltHub.Application.Common.Interfaces;
 using VoltHub.Infrastructure.Authentication;
 using VoltHub.Infrastructure.BackgroundJobs;
+using VoltHub.Infrastructure.Notifications;
 using VoltHub.Infrastructure.Payments;
 using VoltHub.Infrastructure.Persistence;
 
@@ -27,6 +28,7 @@ public static class DependencyInjection
         services.AddSingleton<IPaymentGateway, SimulatedPaymentGateway>();
 
         services.AddHostedService<ReservationExpiryService>();
+        services.AddHostedService<NotificationJob>();
 
         return services;
     }
