@@ -1,0 +1,39 @@
+<h1>Problem reports</h1>
+
+<div class="filters">
+  <mat-button-toggle-group [value]="status()" (change)="setStatus($event.value)" aria-label="Filter by status">
+    <mat-button-toggle value="Open">Open</mat-button-toggle>
+    <mat-button-toggle value="InProgress">In progress</mat-button-toggle>
+    <mat-button-toggle value="Resolved">Resolved</mat-button-toggle>
+    <mat-button-toggle value="">All</mat-button-toggle>
+  </mat-button-toggle-group>
+  <span class="muted">{{ reports().length }} reports</span>
+</div>
+
+<div class="stack-list">
+  @for (report of reports(); track report.id) {
+    <mat-card appearance="outlined" class="item">
+      <div class="row">
+        <div class="stack">
+          <strong>{{ typeLabel(report.type) }}</strong>
+          <a [routerLink]="['/stations', report.stationId]">{{ report.stationName }} · charger {{ report.chargerCode }}</a>
+          <span>{{ report.description }}</span>
+          <span class="muted">
+            Reported by {{ report.reporterName }} on {{ report.createdAt | date: 'dd.MM.yyyy HH:mm' }}
+            @if (report.resolvedAt) { · resolved {{ report.resolvedAt | date: 'dd.MM.yyyy HH:mm' }} }
+          </span>
+        </div>
+        <span class="spacer"></span>
+        <app-status-chip [status]="report.status" />
+        @if (report.status === 'Open') {
+          <button mat-stroked-button (click)="changeStatus(report, 'InProgress')">Start work</button>
+        }
+        @if (report.status !== 'Resolved') {
+          <button mat-flat-button (click)="changeStatus(report, 'Resolved')">Resolve</button>
+        }
+      </div>
+    </mat-card>
+  } @empty {
+    <p class="empty">No reports with this status.</p>
+  }
+</div>

@@ -1,0 +1,5 @@
+.notification { cursor: pointer; }
+.notification .row { flex-wrap: nowrap; align-items: flex-start; }
+.unread { border-left: 4px solid var(--mat-sys-primary); }
+.unread strong { color: var(--mat-sys-primary); }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--mat-sys-primary); margin-top: 6px; flex: none; }

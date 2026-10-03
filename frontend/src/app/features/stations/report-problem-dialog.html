@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>Report a problem · {{ data.stationName }} {{ data.charger.code }}</h2>
+<form (submit)="onSubmit($event)" novalidate>
+  <mat-dialog-content class="form">
+    <mat-form-field appearance="outline">
+      <mat-label>Problem</mat-label>
+      <mat-select [formField]="reportForm.type">
+        @for (type of problemTypes; track type) {
+          <mat-option [value]="type">{{ typeLabels[type] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea matInput rows="4" [formField]="reportForm.description"></textarea>
+      <mat-error>{{ reportForm.description().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    @if (serverError(); as message) {
+      <p class="form-error">{{ message }}</p>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>Cancel</button>
+    <button mat-flat-button type="submit" [disabled]="reportForm().submitting()">Send report</button>
+  </mat-dialog-actions>
+</form>

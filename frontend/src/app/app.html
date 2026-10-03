@@ -1,0 +1,39 @@
+<mat-toolbar class="toolbar">
+  <a routerLink="/stations" class="brand"><mat-icon>ev_station</mat-icon> VoltHub</a>
+
+  @if (auth.isLoggedIn()) {
+    <nav class="nav">
+      <a mat-button routerLink="/stations" routerLinkActive="active">Stations</a>
+      @if (auth.isOwner()) {
+        <a mat-button routerLink="/vehicles" routerLinkActive="active">My vehicles</a>
+        <a mat-button routerLink="/reservations" routerLinkActive="active">Reservations</a>
+        <a mat-button routerLink="/charging" routerLinkActive="active">Charging</a>
+        <a mat-button routerLink="/invoices" routerLinkActive="active">Invoices</a>
+        <a mat-button routerLink="/statistics" routerLinkActive="active">Statistics</a>
+      }
+      @if (auth.isStaff()) {
+        <a mat-button routerLink="/maintenance" routerLinkActive="active">Maintenance</a>
+        <a mat-button routerLink="/problems" routerLinkActive="active">Problem reports</a>
+      }
+      @if (auth.isAdmin()) {
+        <a mat-button routerLink="/admin/users" routerLinkActive="active">Users</a>
+        <a mat-button routerLink="/admin/reports" routerLinkActive="active">Reports</a>
+      }
+    </nav>
+    <span class="spacer"></span>
+    @if (auth.isStaff()) {
+      <a mat-icon-button routerLink="/notifications" aria-label="Notifications" title="Notifications">
+        <mat-icon [matBadge]="notifications.unreadCount()" [matBadgeHidden]="notifications.unreadCount() === 0"
+                  matBadgeSize="small" aria-hidden="false">notifications</mat-icon>
+      </a>
+    }
+    <a class="who" routerLink="/profile" title="Your profile">
+      {{ auth.profile()?.firstName }} · <strong>{{ auth.role() === 'User' ? 'EV owner' : auth.role() }}</strong>
+    </a>
+    <button mat-icon-button (click)="auth.logout()" aria-label="Log out" title="Log out"><mat-icon>logout</mat-icon></button>
+  }
+</mat-toolbar>
+
+<main class="page">
+  <router-outlet />
+</main>

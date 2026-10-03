@@ -1,0 +1,56 @@
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light;
+  @include mat.theme((
+    color: mat.$green-palette,
+    typography: Roboto,
+    density: 0
+  ));
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--mat-sys-surface-container-lowest);
+  color: var(--mat-sys-on-surface);
+}
+
+h1 { font-size: 26px; font-weight: 500; margin: 0 0 16px; }
+h2 { font-size: 19px; font-weight: 500; margin: 24px 0 12px; }
+.muted { color: var(--mat-sys-on-surface-variant); }
+.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.stack { display: flex; flex-direction: column; gap: 4px; }
+.form { display: flex; flex-direction: column; gap: 4px; max-width: 420px; }
+.form-error { color: var(--mat-sys-error); margin: 4px 0 12px; }
+.empty { padding: 24px; text-align: center; color: var(--mat-sys-on-surface-variant); }
+.snack-error { --mat-snack-bar-container-color: #9a1f1f; }
+.item { padding: 12px 16px; margin-bottom: 10px; }
+.stack-list { display: flex; flex-direction: column; }
+.spacer { flex: 1; }
+.summary, .live { margin-bottom: 16px; }
+.metrics { display: flex; gap: 40px; margin: 16px 0 4px; }
+.metrics > div { display: flex; flex-direction: column; }
+.metrics .value { font-size: 28px; font-weight: 500; }
+.history { padding: 8px 0; border-bottom: 1px solid var(--mat-sys-outline-variant); gap: 20px; }
+.pulse { color: #2e7d32; }
+.auth-card { max-width: 480px; margin: 40px auto; }
+
+// ---- Shared by the operator and administrator pages
+.filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 8px; }
+.table-wrap { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; background: var(--mat-sys-surface); font-size: 14px; }
+.table th, .table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--mat-sys-outline-variant); vertical-align: middle; }
+.table th { font-weight: 500; font-size: 13px; color: var(--mat-sys-on-surface-variant); }
+.table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+.metric { padding: 14px 16px; }
+.metric .value { font-size: 26px; font-weight: 500; }
+.metric .label { font-size: 13px; color: var(--mat-sys-on-surface-variant); }
+// A horizontal bar: the outer track is 100%, the inner bar's width is set from the data.
+.bar-track { width: 100%; min-width: 80px; height: 8px; border-radius: 4px; background: var(--mat-sys-surface-container-high); }
+.bar { height: 8px; border-radius: 4px; background: var(--mat-sys-primary); }
+.stars { color: #e69b00; letter-spacing: 1px; }
+// Material makes dialog content display: block, which squeezed the form fields. Keep the column layout in dialogs.
+.mat-mdc-dialog-content.form { display: flex; flex-direction: column; max-width: none; }

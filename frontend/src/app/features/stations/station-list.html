@@ -1,0 +1,77 @@
+<h1>Charging stations</h1>
+
+<div class="filters row">
+  <mat-form-field appearance="outline">
+    <mat-label>City</mat-label>
+    <input matInput [formField]="filterForm.city" (keyup.enter)="search()" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Connector</mat-label>
+    <mat-select [formField]="filterForm.connectorType">
+      <mat-option value="">Any</mat-option>
+      @for (type of connectorTypes; track type) {
+        <mat-option [value]="type">{{ type }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <label class="check"><input type="checkbox" [formField]="filterForm.onlyAvailable" /> Only with a free charger</label>
+
+  <button mat-flat-button (click)="search()"><mat-icon>search</mat-icon> Search</button>
+  <button mat-stroked-button (click)="recommend()"><mat-icon>near_me</mat-icon> Nearest for me</button>
+</div>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+<app-station-map [stations]="stations()" (stationSelected)="open($event)" />
+<p class="muted legend"><span class="dot dot--free"></span> has a free charger <span class="dot dot--busy"></span> none free right now</p>
+
+@if (nearest(); as nearestStations) {
+  <h2>Recommended for you</h2>
+  @if (nearestStations.length === 0) {
+    <p class="empty">No station has a free compatible charger right now.</p>
+  }
+  <div class="grid">
+    @for (station of nearestStations; track station.id) {
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>{{ station.name }}</mat-card-title>
+          <mat-card-subtitle>{{ station.distanceKm | number: '1.1-1' }} km away · {{ station.city }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content><p>{{ station.availableChargers }} free charger(s)</p></mat-card-content>
+        <mat-card-actions><a mat-button [routerLink]="['/stations', station.id]">Book here</a></mat-card-actions>
+      </mat-card>
+    }
+  </div>
+}
+
+<h2>{{ stations().length }} station(s)</h2>
+<div class="grid">
+  @for (station of stations(); track station.id) {
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ station.name }}</mat-card-title>
+        <mat-card-subtitle>{{ station.address }}, {{ station.city }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          <strong [class.free]="station.availableChargerCount > 0">{{ station.availableChargerCount }}</strong>
+          of {{ station.chargerCount }} chargers free now
+        </p>
+        <p class="muted">
+          @if (station.averageRating !== null) {
+            ★ {{ station.averageRating | number: '1.1-1' }}
+          } @else {
+            No ratings yet
+          }
+        </p>
+      </mat-card-content>
+      <mat-card-actions><a mat-button [routerLink]="['/stations', station.id]">Details & booking</a></mat-card-actions>
+    </mat-card>
+  } @empty {
+    <p class="empty">No stations match these filters.</p>
+  }
+</div>

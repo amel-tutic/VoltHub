@@ -1,0 +1,63 @@
+<h1>Your statistics</h1>
+
+@if (stats(); as s) {
+  <div class="cards">
+    <mat-card appearance="outlined" class="metric"><span class="value">{{ s.sessionCount }}</span><span class="label">charging sessions</span></mat-card>
+    <mat-card appearance="outlined" class="metric"><span class="value">{{ s.totalEnergyKwh | number: '1.0-1' }}</span><span class="label">kWh charged</span></mat-card>
+    <mat-card appearance="outlined" class="metric"><span class="value">{{ s.totalCost | number: '1.0-0' }}</span><span class="label">RSD spent</span></mat-card>
+    <mat-card appearance="outlined" class="metric"><span class="value">{{ s.averageSessionMinutes | number: '1.0-0' }}</span><span class="label">minutes per session</span></mat-card>
+  </div>
+
+  <h2>Last six months</h2>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Month</th><th class="num">Sessions</th><th class="num">kWh</th><th class="num">RSD</th><th></th></tr></thead>
+      <tbody>
+        @for (month of s.monthly; track month.month) {
+          <tr>
+            <td>{{ monthLabel(month.month) }}</td>
+            <td class="num">{{ month.sessions }}</td>
+            <td class="num">{{ month.energyKwh | number: '1.1-1' }}</td>
+            <td class="num">{{ month.cost | number: '1.0-0' }}</td>
+            <td><div class="bar-track"><div class="bar" [style.width.%]="widthPercent(month.energyKwh, maxMonthEnergy())"></div></div></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Where you charge most</h2>
+  <div class="stack-list">
+    @for (station of s.topStations; track station.stationId; let i = $index) {
+      <mat-card appearance="outlined" class="item">
+        <div class="row">
+          <strong>{{ i + 1 }}.</strong>
+          <a [routerLink]="['/stations', station.stationId]">{{ station.stationName }}</a>
+          <span class="spacer"></span>
+          <span class="muted">{{ station.sessions }} sessions · {{ station.energyKwh | number: '1.1-1' }} kWh</span>
+        </div>
+      </mat-card>
+    } @empty {
+      <p class="empty">No completed sessions yet. Your favourite stations will appear here.</p>
+    }
+  </div>
+}
+
+<h2>Problems you reported</h2>
+<div class="stack-list">
+  @for (report of reports(); track report.id) {
+    <mat-card appearance="outlined" class="item">
+      <div class="row">
+        <div class="stack">
+          <strong>{{ typeLabel(report.type) }} · {{ report.stationName }} {{ report.chargerCode }}</strong>
+          <span>{{ report.description }}</span>
+          <span class="muted">{{ report.createdAt | date: 'dd.MM.yyyy HH:mm' }}</span>
+        </div>
+        <span class="spacer"></span>
+        <app-status-chip [status]="report.status" />
+      </div>
+    </mat-card>
+  } @empty {
+    <p class="empty">You haven't reported any problems. Use "Report a problem" on a station's charger if something is wrong.</p>
+  }
+</div>

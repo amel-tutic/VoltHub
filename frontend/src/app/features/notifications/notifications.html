@@ -1,0 +1,31 @@
+<h1>Notifications</h1>
+
+<div class="filters">
+  <mat-slide-toggle [checked]="unreadOnly()" (change)="setUnreadOnly($event.checked)">Unread only</mat-slide-toggle>
+  <span class="muted">{{ unreadCount() }} unread</span>
+  <span class="spacer"></span>
+  <button mat-stroked-button [disabled]="unreadCount() === 0" (click)="markAllRead()">
+    <mat-icon>done_all</mat-icon> Mark all as read
+  </button>
+</div>
+
+<div class="stack-list">
+  @for (item of items(); track item.id) {
+    <mat-card appearance="outlined" class="item notification" [class.unread]="!item.isRead" (click)="markRead(item)">
+      <div class="row">
+        <mat-icon>{{ icon(item.type) }}</mat-icon>
+        <div class="stack">
+          <strong>{{ item.title }}</strong>
+          <span>{{ item.message }}</span>
+          <span class="muted">{{ item.createdAt | date: 'dd.MM.yyyy HH:mm' }}</span>
+        </div>
+        <span class="spacer"></span>
+        @if (!item.isRead) {
+          <span class="dot" title="Unread"></span>
+        }
+      </div>
+    </mat-card>
+  } @empty {
+    <p class="empty">No notifications. They appear here when a service is due, a charger is out of order too long, or a driver reports a problem.</p>
+  }
+</div>

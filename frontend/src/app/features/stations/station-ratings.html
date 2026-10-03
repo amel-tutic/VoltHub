@@ -1,0 +1,44 @@
+<h2>Ratings</h2>
+
+@if (ratings(); as r) {
+  @if (r.average !== null) {
+    <p><span class="stars">{{ stars(rounded(r.average)) }}</span> {{ r.average | number: '1.1-1' }} from {{ r.count }} ratings</p>
+  }
+
+  @if (auth.isOwner()) {
+    <mat-card appearance="outlined" class="item">
+      <form class="form" (submit)="onSubmit($event)" novalidate>
+        <strong>{{ r.mine ? 'Your rating' : 'Rate this station' }}</strong>
+        <mat-form-field appearance="outline">
+          <mat-label>Stars</mat-label>
+          <mat-select [formField]="ratingForm.score">
+            @for (score of scores; track score) {
+              <mat-option [value]="score">{{ stars(score) }} ({{ score }})</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Comment (optional)</mat-label>
+          <textarea matInput rows="2" [formField]="ratingForm.comment"></textarea>
+          <mat-error>{{ ratingForm.comment().errors()[0]?.message }}</mat-error>
+        </mat-form-field>
+        @if (serverError(); as message) {
+          <p class="form-error">{{ message }}</p>
+        }
+        <button mat-flat-button type="submit" [disabled]="ratingForm().submitting()">{{ r.mine ? 'Update rating' : 'Save rating' }}</button>
+      </form>
+    </mat-card>
+  }
+
+  <div class="stack-list">
+    @for (item of r.items; track $index) {
+      <div class="history stack">
+        <span><span class="stars">{{ stars(item.score) }}</span> {{ item.score }}/5 · <strong>{{ item.author }}</strong> ·
+          <span class="muted">{{ item.createdAt | date: 'dd.MM.yyyy' }}</span></span>
+        @if (item.comment) { <span>{{ item.comment }}</span> }
+      </div>
+    } @empty {
+      <p class="empty">No ratings yet.</p>
+    }
+  </div>
+}

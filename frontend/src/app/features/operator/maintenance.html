@@ -1,0 +1,124 @@
+<h1>Maintenance</h1>
+
+<h2>Open work</h2>
+<div class="stack-list">
+  @for (item of openItems(); track item.id) {
+    <mat-card appearance="outlined" class="item">
+      <div class="row">
+        <app-status-chip [status]="item.type" />
+        <div class="stack">
+          <strong>{{ item.stationName }} · {{ item.chargerCode }}</strong>
+          <span>{{ item.description }}</span>
+          <span class="muted">
+            @if (item.scheduledDate) { Planned for {{ item.scheduledDate | date: 'dd.MM.yyyy HH:mm' }} }
+            @else { Reported {{ item.reportedAt | date: 'dd.MM.yyyy HH:mm' }} }
+          </span>
+        </div>
+        <span class="spacer"></span>
+        <app-status-chip [status]="item.chargerStatus" />
+        <button mat-button (click)="openCharger(item)">Open</button>
+        <button mat-flat-button (click)="resolve(item.id)">Resolve</button>
+      </div>
+    </mat-card>
+  } @empty {
+    <p class="empty">Nothing to do: no open faults and no planned services.</p>
+  }
+</div>
+
+<h2>Charger</h2>
+<div class="filters">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Station</mat-label>
+    <mat-select [value]="stationId()" (selectionChange)="selectStation($event.value)">
+      @for (station of stations(); track station.id) {
+        <mat-option [value]="station.id">{{ station.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Charger</mat-label>
+    <mat-select [value]="chargerId()" [disabled]="chargers().length === 0" (selectionChange)="selectCharger($event.value)">
+      @for (charger of chargers(); track charger.id) {
+        <mat-option [value]="charger.id">{{ charger.code }} · {{ charger.connectorType }} {{ charger.powerKw }} kW</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (history(); as h) {
+  <div class="cards">
+    <mat-card appearance="outlined" class="metric">
+      <span class="label">Status</span>
+      <app-status-chip [status]="h.status" />
+      <span class="muted small">since {{ h.statusChangedAt | date: 'dd.MM.yyyy HH:mm' }}</span>
+    </mat-card>
+    <mat-card appearance="outlined" class="metric">
+      <span class="label">Last service</span>
+      <span class="value">{{ h.lastServiceAt ? (h.lastServiceAt | date: 'dd.MM.yyyy') : '—' }}</span>
+    </mat-card>
+    <mat-card appearance="outlined" class="metric">
+      <span class="label">Next service</span>
+      <span class="value">{{ h.nextServiceAt ? (h.nextServiceAt | date: 'dd.MM.yyyy') : '—' }}</span>
+    </mat-card>
+  </div>
+
+  <h2>Record work on {{ h.chargerCode }}</h2>
+  <mat-card appearance="outlined" class="item">
+    <form class="form wide" (submit)="onSubmit($event)" novalidate>
+      <mat-form-field appearance="outline">
+        <mat-label>What happened</mat-label>
+        <mat-select [formField]="actionForm.action">
+          <mat-option value="fault">Report a fault (charger goes out of order)</mat-option>
+          <mat-option value="plan">Plan a service</mat-option>
+          <mat-option value="Repair">Log a repair (closes open faults)</mat-option>
+          <mat-option value="Inspection">Log an inspection</mat-option>
+        </mat-select>
+      </mat-form-field>
+      @if (actionModel().action === 'plan') {
+        <mat-form-field appearance="outline">
+          <mat-label>Planned for</mat-label>
+          <input matInput type="datetime-local" [formField]="actionForm.scheduledDate" />
+          <mat-error>{{ actionForm.scheduledDate().errors()[0]?.message }}</mat-error>
+        </mat-form-field>
+      }
+      <mat-form-field appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3" [formField]="actionForm.description"></textarea>
+        <mat-error>{{ actionForm.description().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+      @if (serverError(); as message) {
+        <p class="form-error">{{ message }}</p>
+      }
+      <button mat-flat-button type="submit" [disabled]="actionForm().submitting()">Save</button>
+    </form>
+  </mat-card>
+
+  <h2>History</h2>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th>Type</th><th>Description</th><th>Reported</th><th>Planned for</th><th>Resolved</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (record of h.records; track record.id) {
+          <tr>
+            <td><app-status-chip [status]="record.type" /></td>
+            <td>{{ record.description }}</td>
+            <td>{{ record.reportedAt | date: 'dd.MM.yyyy HH:mm' }}</td>
+            <td>{{ record.scheduledDate ? (record.scheduledDate | date: 'dd.MM.yyyy HH:mm') : '' }}</td>
+            <td>{{ record.resolvedAt ? (record.resolvedAt | date: 'dd.MM.yyyy HH:mm') : 'open' }}</td>
+            <td>
+              @if (!record.resolvedAt) {
+                <button mat-button (click)="resolve(record.id)">Resolve</button>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6" class="empty">No maintenance recorded for this charger yet.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <p class="empty">Choose a station and a charger to see its history and record work.</p>
+}

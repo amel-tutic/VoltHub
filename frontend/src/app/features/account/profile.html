@@ -1,0 +1,53 @@
+<h1>Your profile</h1>
+
+@if (auth.profile(); as profile) {
+  <p class="muted">{{ profile.email }} · {{ profile.role === 'User' ? 'EV owner' : profile.role }}</p>
+}
+
+<div class="profile-grid">
+  <mat-card appearance="outlined" class="item">
+    <h2>Name</h2>
+    <form class="form" (submit)="saveProfile($event)" novalidate>
+      <mat-form-field appearance="outline">
+        <mat-label>First name</mat-label>
+        <input matInput [formField]="profileForm.firstName" />
+        <mat-error>{{ profileForm.firstName().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Last name</mat-label>
+        <input matInput [formField]="profileForm.lastName" />
+        <mat-error>{{ profileForm.lastName().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+      @if (profileError(); as message) {
+        <p class="form-error">{{ message }}</p>
+      }
+      <button mat-flat-button type="submit" [disabled]="profileForm().submitting()">Save name</button>
+    </form>
+  </mat-card>
+
+  <mat-card appearance="outlined" class="item">
+    <h2>Password</h2>
+    <form class="form" (submit)="changePassword($event)" novalidate>
+      <mat-form-field appearance="outline">
+        <mat-label>Current password</mat-label>
+        <input matInput type="password" autocomplete="current-password" [formField]="passwordForm.currentPassword" />
+        <mat-error>{{ passwordForm.currentPassword().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>New password</mat-label>
+        <input matInput type="password" autocomplete="new-password" [formField]="passwordForm.newPassword" />
+        <mat-hint>At least 8 characters, with a letter and a digit.</mat-hint>
+        <mat-error>{{ passwordForm.newPassword().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Repeat new password</mat-label>
+        <input matInput type="password" autocomplete="new-password" [formField]="passwordForm.confirmPassword" />
+        <mat-error>{{ passwordForm.confirmPassword().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+      @if (passwordError(); as message) {
+        <p class="form-error">{{ message }}</p>
+      }
+      <button mat-flat-button type="submit" [disabled]="passwordForm().submitting()">Change password</button>
+    </form>
+  </mat-card>
+</div>

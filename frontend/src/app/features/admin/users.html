@@ -1,0 +1,79 @@
+<h1>Users</h1>
+
+<div class="filters">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Role</mat-label>
+    <mat-select [value]="filters().role" (selectionChange)="setRole($event.value)">
+      <mat-option value="">All roles</mat-option>
+      @for (role of roles; track role) {
+        <mat-option [value]="role">{{ roleLabel(role) }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Search name or email</mat-label>
+    <input matInput #search [value]="filters().search" (keyup.enter)="setSearch(search.value)" />
+  </mat-form-field>
+  <button mat-stroked-button (click)="setSearch(search.value)"><mat-icon>search</mat-icon> Search</button>
+  <span class="muted">{{ users().length }} accounts, {{ activeCount() }} active</span>
+</div>
+
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th><th>Email</th><th>Role</th><th class="num">Vehicles</th><th>Created</th><th>Status</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of users(); track user.id) {
+        <tr>
+          <td>{{ user.firstName }} {{ user.lastName }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ roleLabel(user.role) }}</td>
+          <td class="num">{{ user.vehicleCount }}</td>
+          <td>{{ user.createdAt | date: 'dd.MM.yyyy' }}</td>
+          <td><app-status-chip [status]="user.isActive ? 'Active' : 'Inactive'" /></td>
+          <td>
+            <button mat-button [disabled]="isMe(user)" (click)="toggleActive(user)">
+              {{ user.isActive ? 'Deactivate' : 'Activate' }}
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="7" class="empty">No accounts match the filters.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<h2>Create an operator account</h2>
+<mat-card appearance="outlined" class="item">
+  <form class="form" (submit)="createOperator($event)" novalidate>
+    <mat-form-field appearance="outline">
+      <mat-label>First name</mat-label>
+      <input matInput [formField]="operatorForm.firstName" />
+      <mat-error>{{ operatorForm.firstName().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Last name</mat-label>
+      <input matInput [formField]="operatorForm.lastName" />
+      <mat-error>{{ operatorForm.lastName().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" [formField]="operatorForm.email" />
+      <mat-error>{{ operatorForm.email().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Starting password</mat-label>
+      <input matInput type="password" autocomplete="new-password" [formField]="operatorForm.password" />
+      <mat-hint>The operator can change it on their profile page.</mat-hint>
+      <mat-error>{{ operatorForm.password().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    @if (serverError(); as message) {
+      <p class="form-error">{{ message }}</p>
+    }
+    <button mat-flat-button type="submit" [disabled]="operatorForm().submitting()">Create operator</button>
+  </form>
+</mat-card>

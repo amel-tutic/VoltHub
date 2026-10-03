@@ -1,0 +1,8 @@
+.chargers { display: flex; flex-direction: column; gap: 12px; }
+.charger { padding: 12px 16px; }
+.charger-main { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.code { font-size: 22px; font-weight: 600; min-width: 44px; }
+.spacer { flex: 1; }
+.operator { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--mat-sys-outline-variant); }
+.operator mat-form-field { width: 190px; }
+.operator .price { width: 150px; }

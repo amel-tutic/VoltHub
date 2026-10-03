@@ -1,0 +1,31 @@
+<h1>Invoices</h1>
+
+<mat-form-field appearance="outline">
+  <mat-label>Pay with</mat-label>
+  <mat-select [value]="method()" (selectionChange)="method.set($event.value)">
+    @for (m of methods; track m) {
+      <mat-option [value]="m">{{ methodLabel[m] }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+
+@for (invoice of invoices(); track invoice.id) {
+  <mat-card appearance="outlined" class="item">
+    <div class="row">
+      <div class="stack">
+        <strong>{{ invoice.invoiceNumber }}</strong>
+        <span class="muted">{{ invoice.issuedAt | date: 'dd.MM.yyyy HH:mm' }} · {{ invoice.stationName }}</span>
+      </div>
+      <strong>{{ invoice.amount | number: '1.2-2' }} RSD</strong>
+      <app-status-chip [status]="invoice.status" />
+      <span class="spacer"></span>
+      @if (invoice.status === 'Pending') {
+        <button mat-flat-button [disabled]="payingId() === invoice.id" (click)="pay(invoice)">Pay</button>
+      } @else if (invoice.paidAt) {
+        <span class="muted">paid {{ invoice.paidAt | date: 'dd.MM. HH:mm' }}</span>
+      }
+    </div>
+  </mat-card>
+} @empty {
+  <p class="empty">No invoices yet. They appear automatically when a charging session ends.</p>
+}

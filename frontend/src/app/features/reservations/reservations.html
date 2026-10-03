@@ -1,0 +1,27 @@
+<h1>My reservations</h1>
+
+<div class="stack-list">
+  @for (reservation of reservations(); track reservation.id) {
+    <mat-card appearance="outlined" class="item">
+      <div class="row">
+        <div class="stack">
+          <strong>{{ reservation.stationName }} · {{ reservation.chargerCode }}</strong>
+          <span class="muted">
+            {{ reservation.startTime | date: 'EEE dd.MM.yyyy HH:mm' }} – {{ reservation.endTime | date: 'HH:mm' }}
+            · {{ reservation.vehicleName }}
+          </span>
+        </div>
+        <app-status-chip [status]="reservation.status" />
+        <span class="spacer"></span>
+        @if (canStart(reservation)) {
+          <button mat-flat-button (click)="start(reservation)"><mat-icon>bolt</mat-icon> Start charging</button>
+        }
+        @if (canCancel(reservation)) {
+          <button mat-button (click)="cancel(reservation)">Cancel</button>
+        }
+      </div>
+    </mat-card>
+  } @empty {
+    <p class="empty">No reservations yet. <a routerLink="/stations">Find a charger</a></p>
+  }
+</div>

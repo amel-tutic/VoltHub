@@ -1,0 +1,50 @@
+<h2 mat-dialog-title>Reserve {{ data.charger.code }} · {{ data.stationName }}</h2>
+<form (submit)="onSubmit($event)" novalidate>
+  <mat-dialog-content class="form">
+    <p class="muted">{{ data.charger.connectorType }} · {{ data.charger.currentType }} · {{ data.charger.powerKw }} kW · {{ data.charger.pricePerKwh }} RSD/kWh</p>
+
+    @if (loaded() && compatible().length === 0) {
+      <p class="form-error">
+        None of your vehicles has a {{ data.charger.connectorType }} connector.
+        <a routerLink="/vehicles" mat-dialog-close>Add a vehicle</a>
+      </p>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Vehicle</mat-label>
+      <mat-select [formField]="reserveForm.vehicleId">
+        @for (vehicle of compatible(); track vehicle.id) {
+          <mat-option [value]="vehicle.id">{{ vehicle.make }} {{ vehicle.model }}</mat-option>
+        }
+      </mat-select>
+      <mat-error>{{ reserveForm.vehicleId().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label>From</mat-label>
+        <input matInput type="datetime-local" [formField]="reserveForm.start" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>To</mat-label>
+        <input matInput type="datetime-local" [formField]="reserveForm.end" />
+      </mat-form-field>
+    </div>
+    <button mat-button type="button" (click)="startNow()">Start now</button>
+
+    <h3>Already booked (next 7 days)</h3>
+    @for (slot of busySlots(); track slot.startTime) {
+      <div class="muted">{{ slot.startTime | date: 'EEE dd.MM. HH:mm' }} – {{ slot.endTime | date: 'HH:mm' }}</div>
+    } @empty {
+      <div class="muted">No bookings yet — every slot is free.</div>
+    }
+
+    @if (serverError(); as message) {
+      <p class="form-error">{{ message }}</p>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close>Cancel</button>
+    <button mat-flat-button type="submit" [disabled]="reserveForm().submitting() || compatible().length === 0">Reserve</button>
+  </mat-dialog-actions>
+</form>

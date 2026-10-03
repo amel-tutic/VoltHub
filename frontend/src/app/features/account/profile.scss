@@ -1,0 +1,2 @@
+// Two cards side by side on wide screens, stacked on narrow ones.
+.profile-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }

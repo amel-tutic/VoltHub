@@ -1,0 +1,53 @@
+<h1>Charging</h1>
+
+@if (lastSummary(); as summary) {
+  <mat-card appearance="outlined" class="summary">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>receipt_long</mat-icon>
+      <mat-card-title>Charging finished · invoice {{ summary.invoiceNumber }}</mat-card-title>
+      <mat-card-subtitle>{{ summary.startedAt | date: 'HH:mm' }} – {{ summary.endedAt | date: 'HH:mm' }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>{{ summary.energyKwh | number: '1.3-3' }} kWh × {{ summary.pricePerKwh | number: '1.2-2' }} RSD
+        = <strong>{{ summary.totalPrice | number: '1.2-2' }} RSD</strong></p>
+    </mat-card-content>
+    <mat-card-actions><a mat-flat-button routerLink="/invoices">Pay invoice</a></mat-card-actions>
+  </mat-card>
+}
+
+@for (session of active(); track session.sessionId) {
+  <mat-card appearance="outlined" class="live">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="pulse">bolt</mat-icon>
+      <mat-card-title>{{ session.stationName }} · {{ session.chargerCode }}</mat-card-title>
+      <mat-card-subtitle>{{ session.vehicleName }} · slot ends {{ session.reservationEndsAt | date: 'HH:mm' }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-progress-bar mode="indeterminate" />
+      <div class="metrics">
+        <div><span class="value">{{ session.elapsedMinutes | number: '1.0-1' }}</span><span class="muted">minutes</span></div>
+        <div><span class="value">{{ session.estimatedEnergyKwh | number: '1.2-2' }}</span><span class="muted">kWh so far</span></div>
+        <div><span class="value">{{ session.estimatedCost | number: '1.2-2' }}</span><span class="muted">RSD so far</span></div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions><button mat-flat-button (click)="stop(session)"><mat-icon>stop_circle</mat-icon> Stop charging</button></mat-card-actions>
+  </mat-card>
+} @empty {
+  @if (!lastSummary()) {
+    <p class="empty">Nothing is charging. Start a session from <a routerLink="/reservations">your reservations</a>.</p>
+  }
+}
+
+<h2>History</h2>
+@for (item of history(); track item.sessionId) {
+  <div class="history row">
+    <span>{{ item.startedAt | date: 'dd.MM.yyyy HH:mm' }}</span>
+    <span>{{ item.stationName }} · {{ item.chargerCode }}</span>
+    <span class="muted">{{ item.vehicleName }}</span>
+    <span>{{ item.energyKwh ?? 0 | number: '1.2-2' }} kWh</span>
+    <span>{{ item.totalPrice ?? 0 | number: '1.2-2' }} RSD</span>
+    <app-status-chip [status]="item.status" />
+  </div>
+} @empty {
+  <p class="muted">No charging sessions yet.</p>
+}

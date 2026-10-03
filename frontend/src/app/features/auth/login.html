@@ -1,0 +1,25 @@
+<mat-card class="auth-card" appearance="outlined">
+  <mat-card-header><mat-card-title>Log in to VoltHub</mat-card-title></mat-card-header>
+  <mat-card-content>
+    <form class="form" (submit)="onSubmit($event)" novalidate>
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" autocomplete="username" [formField]="loginForm.email" />
+        <mat-error>{{ loginForm.email().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" autocomplete="current-password" [formField]="loginForm.password" />
+        <mat-error>{{ loginForm.password().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+
+      @if (serverError(); as message) {
+        <p class="form-error">{{ message }}</p>
+      }
+
+      <button mat-flat-button type="submit" [disabled]="loginForm().submitting()">Log in</button>
+    </form>
+    <p class="muted">No account? <a routerLink="/register">Register as an EV owner</a></p>
+  </mat-card-content>
+</mat-card>

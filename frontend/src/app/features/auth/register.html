@@ -1,0 +1,39 @@
+<mat-card class="auth-card" appearance="outlined">
+  <mat-card-header><mat-card-title>Create an EV owner account</mat-card-title></mat-card-header>
+  <mat-card-content>
+    <form class="form" (submit)="onSubmit($event)" novalidate>
+      <div class="row">
+        <mat-form-field appearance="outline">
+          <mat-label>First name</mat-label>
+          <input matInput autocomplete="given-name" [formField]="registerForm.firstName" />
+          <mat-error>{{ registerForm.firstName().errors()[0]?.message }}</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Last name</mat-label>
+          <input matInput autocomplete="family-name" [formField]="registerForm.lastName" />
+          <mat-error>{{ registerForm.lastName().errors()[0]?.message }}</mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" autocomplete="email" [formField]="registerForm.email" />
+        <mat-error>{{ registerForm.email().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" autocomplete="new-password" [formField]="registerForm.password" />
+        <mat-hint>At least 8 characters, with a letter and a digit</mat-hint>
+        <mat-error>{{ registerForm.password().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+
+      @if (serverError(); as message) {
+        <p class="form-error">{{ message }}</p>
+      }
+
+      <button mat-flat-button type="submit" [disabled]="registerForm().submitting()">Create account</button>
+    </form>
+    <p class="muted">Already registered? <a routerLink="/login">Log in</a></p>
+  </mat-card-content>
+</mat-card>

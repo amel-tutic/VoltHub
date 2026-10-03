@@ -1,0 +1,8 @@
+.filters { margin-bottom: 4px; }
+.filters mat-form-field { width: 200px; }
+.check { display: flex; align-items: center; gap: 6px; margin: 0 8px 20px 0; }
+.free { color: #2e7d32; font-size: 18px; }
+.legend { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-left: 8px; }
+.dot--free { background: #2e7d32; }
+.dot--busy { background: #9e9e9e; }

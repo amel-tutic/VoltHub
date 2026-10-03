@@ -1,0 +1,52 @@
+<a mat-button routerLink="/stations"><mat-icon>arrow_back</mat-icon> All stations</a>
+
+@if (station(); as s) {
+  <h1>{{ s.name }}</h1>
+  <p class="muted">{{ s.address }}, {{ s.city }}
+    @if (s.averageRating !== null) { · ★ {{ s.averageRating | number: '1.1-1' }} ({{ s.ratingCount }}) }
+  </p>
+  @if (s.description) { <p>{{ s.description }}</p> }
+
+  <h2>Chargers</h2>
+  <div class="chargers">
+    @for (charger of s.chargers; track charger.id) {
+      <mat-card appearance="outlined" class="charger">
+        <div class="charger-main">
+          <div class="code">{{ charger.code }}</div>
+          <div class="stack">
+            <span>{{ charger.connectorType }} · {{ charger.currentType }} · {{ charger.powerKw }} kW</span>
+            <span class="muted">{{ charger.pricePerKwh | number: '1.2-2' }} RSD/kWh</span>
+          </div>
+          <app-status-chip [status]="charger.status" />
+          <span class="spacer"></span>
+          @if (auth.isOwner()) {
+            <button mat-button (click)="reportProblem(charger)"><mat-icon>report_problem</mat-icon> Report a problem</button>
+            <button mat-flat-button [disabled]="!canReserve(charger)" (click)="reserve(charger)">Reserve</button>
+          }
+        </div>
+
+        @if (auth.isStaff()) {
+          <div class="operator row">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label>Status</mat-label>
+              <mat-select [value]="baseStatus(charger)" (selectionChange)="changeStatus(charger, $event.value)">
+                @for (status of operatorStatuses; track status) {
+                  <mat-option [value]="status">{{ status }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="price">
+              <mat-label>Price (RSD/kWh)</mat-label>
+              <input matInput type="number" min="0" step="0.5" #price [value]="charger.pricePerKwh" />
+            </mat-form-field>
+            <button mat-stroked-button (click)="changePrice(charger, price.valueAsNumber)">Set price</button>
+          </div>
+        }
+      </mat-card>
+    } @empty {
+      <p class="empty">This station has no chargers yet.</p>
+    }
+  </div>
+
+  <app-station-ratings [stationId]="s.id" (rated)="load(s.id)" />
+}
