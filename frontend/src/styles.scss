@@ -36,6 +36,7 @@ h2 { font-size: 19px; font-weight: 500; margin: 24px 0 12px; }
 .history { padding: 8px 0; border-bottom: 1px solid var(--mat-sys-outline-variant); gap: 20px; }
 .pulse { color: #2e7d32; }
 .auth-card { max-width: 480px; margin: 40px auto; }
+.auth-card mat-card-header { margin-bottom: 12px; }   // room between the title and the first field
 
 // ---- Shared by the operator and administrator pages
 .filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 8px; }

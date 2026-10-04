@@ -1,6 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { BusySlot, ChargerStatus, ConnectorType, NearestStation, StationDetails, StationSummary } from '../api/models';
+import {
+  BusySlot, ChargerInput, ChargerStatus, ConnectorType, CreatedResponse, NearestStation, StationDetails, StationInput, StationSummary
+} from '../api/models';
 
 export interface StationFilters { city: string; connectorType: ConnectorType | ''; onlyAvailable: boolean; }
 
@@ -35,5 +37,28 @@ export class StationsService {
 
   setChargerPrice(chargerId: string, pricePerKwh: number) {
     return this.http.patch<void>(`/api/chargers/${chargerId}/price`, { pricePerKwh });
+  }
+
+  // ---- Station management (SSA 6.1, 6.2), for operators and administrators
+
+  create(station: StationInput) {
+    return this.http.post<CreatedResponse>('/api/stations', this.toBody(station));
+  }
+
+  update(id: string, station: StationInput) {
+    return this.http.put<void>(`/api/stations/${id}`, this.toBody(station));
+  }
+
+  delete(id: string) {
+    return this.http.delete<void>(`/api/stations/${id}`);
+  }
+
+  addCharger(stationId: string, charger: ChargerInput) {
+    return this.http.post<CreatedResponse>(`/api/stations/${stationId}/chargers`, charger);
+  }
+
+  // The API stores "no description" as null, not as an empty string.
+  private toBody(station: StationInput) {
+    return { ...station, description: station.description.trim() || null };
   }
 }

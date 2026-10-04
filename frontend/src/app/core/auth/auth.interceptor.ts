@@ -23,7 +23,7 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
       return auth.refresh().pipe(
         switchMap(newToken => next(withToken(request, newToken))),
         catchError(refreshError => {
-          auth.logout();   // refresh token expired or revoked: back to the login page
+          auth.logout('ended');   // refresh token expired or revoked: back to the login page, with the reason
           return throwError(() => refreshError);
         }));
     }));

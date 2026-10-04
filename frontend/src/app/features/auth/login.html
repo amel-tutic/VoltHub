@@ -1,6 +1,9 @@
 <mat-card class="auth-card" appearance="outlined">
   <mat-card-header><mat-card-title>Log in to VoltHub</mat-card-title></mat-card-header>
   <mat-card-content>
+    @if (reason() === 'ended') {
+      <p class="muted">Your session has ended. Please log in again.</p>
+    }
     <form class="form" (submit)="onSubmit($event)" novalidate>
       <mat-form-field appearance="outline">
         <mat-label>Email</mat-label>
@@ -16,6 +19,10 @@
 
       @if (serverError(); as message) {
         <p class="form-error">{{ message }}</p>
+      }
+
+      @if (slow()) {
+        <p class="muted">The server is waking up after a quiet period. The first sign-in can take up to a minute.</p>
       }
 
       <button mat-flat-button type="submit" [disabled]="loginForm().submitting()">Log in</button>

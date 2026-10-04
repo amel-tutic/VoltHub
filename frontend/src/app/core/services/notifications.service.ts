@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { map, tap } from 'rxjs';
 import { NotificationList } from '../api/models';
+import { BACKGROUND } from '../ui/loading';
 
 // Notifications (SSA 7.6). The unread count lives here, so the toolbar bell and the
 // notifications page always show the same number.
@@ -18,7 +19,9 @@ export class NotificationsService {
 
   // A light call for the toolbar: one item is enough, only the count matters.
   refreshUnreadCount() {
-    return this.http.get<NotificationList>('/api/notifications', { params: { unreadOnly: true, take: 1 } }).pipe(
+    return this.http.get<NotificationList>('/api/notifications', {
+      params: { unreadOnly: true, take: 1 }, context: new HttpContext().set(BACKGROUND, true)   // polled: no loading bar
+    }).pipe(
       tap(list => this.unreadCount.set(list.unreadCount)),
       map(list => list.unreadCount));
   }

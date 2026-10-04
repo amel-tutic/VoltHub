@@ -64,11 +64,12 @@ export class AuthService {
     this.store(response);
   }
 
-  logout(): void {
+  // reason 'ended': the session ran out (or the account was deactivated); the login page says so.
+  logout(reason?: 'ended'): void {
     this.stored.set(null);
     this.profile.set(null);
     localStorage.removeItem(STORAGE_KEY);
-    void this.router.navigateByUrl('/login');
+    void this.router.navigate(['/login'], { queryParams: reason ? { reason } : {} });
   }
 
   private store(response: AuthResponse): void {

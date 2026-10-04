@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, input } from '@angular/core';
 import { FormField, email, form, required, submit } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -20,6 +20,9 @@ export class Login {
   private readonly router = inject(Router);
 
   protected readonly serverError = signal<string | null>(null);
+  protected readonly slow = signal(false);
+  // ?reason=ended after a forced logout; query parameters arrive as inputs (withComponentInputBinding).
+  readonly reason = input<string>();
   protected readonly model = signal({ email: '', password: '' });
 
   // Signal Forms: the model is a signal; the schema lists the rules for each field.
@@ -34,12 +37,17 @@ export class Login {
     this.serverError.set(null);
     // submit() marks every field touched and only runs the action when the form is valid.
     void submit(this.loginForm, async () => {
+      // A free host sleeps when idle; if signing in is slow, say why instead of looking stuck.
+      const slowHint = setTimeout(() => this.slow.set(true), 4000);
       try {
         const { email, password } = this.model();
         await firstValueFrom(this.auth.login(email, password));
         await this.router.navigateByUrl('/stations');
       } catch (error) {
         this.serverError.set(apiErrorMessage(error));
+      } finally {
+        clearTimeout(slowHint);
+        this.slow.set(false);
       }
       return undefined;
     });

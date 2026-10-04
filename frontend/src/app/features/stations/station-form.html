@@ -1,0 +1,49 @@
+@if (isEdit()) {
+  <a mat-button [routerLink]="['/stations', id()]"><mat-icon>arrow_back</mat-icon> Back to the station</a>
+} @else {
+  <a mat-button routerLink="/stations"><mat-icon>arrow_back</mat-icon> All stations</a>
+}
+
+<h1>{{ isEdit() ? 'Edit station' : 'New station' }}</h1>
+
+<mat-card appearance="outlined" class="item">
+  <form class="form" (submit)="onSubmit($event)" novalidate>
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput [formField]="stationForm.name" />
+      <mat-error>{{ stationForm.name().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Address</mat-label>
+      <input matInput [formField]="stationForm.address" />
+      <mat-error>{{ stationForm.address().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>City</mat-label>
+      <input matInput [formField]="stationForm.city" />
+      <mat-error>{{ stationForm.city().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Latitude</mat-label>
+      <input matInput type="number" step="0.0001" [formField]="stationForm.latitude" />
+      <mat-error>{{ stationForm.latitude().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Longitude</mat-label>
+      <input matInput type="number" step="0.0001" [formField]="stationForm.longitude" />
+      <mat-hint>On openstreetmap.org, right-click a place and choose "Show address" to see its coordinates.</mat-hint>
+      <mat-error>{{ stationForm.longitude().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Description (optional)</mat-label>
+      <textarea matInput rows="3" [formField]="stationForm.description"></textarea>
+      <mat-error>{{ stationForm.description().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    @if (serverError(); as message) {
+      <p class="form-error">{{ message }}</p>
+    }
+    <button mat-flat-button type="submit" [disabled]="stationForm().submitting()">
+      {{ isEdit() ? 'Save changes' : 'Create station' }}
+    </button>
+  </form>
+</mat-card>

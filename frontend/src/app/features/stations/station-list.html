@@ -1,4 +1,10 @@
-<h1>Charging stations</h1>
+<div class="row">
+  <h1>Charging stations</h1>
+  <span class="spacer"></span>
+  @if (auth.isStaff()) {
+    <a mat-flat-button routerLink="/stations/new"><mat-icon>add</mat-icon> New station</a>
+  }
+</div>
 
 <div class="filters row">
   <mat-form-field appearance="outline">

@@ -13,6 +13,7 @@ import { CONNECTOR_TYPES, NearestStation, StationSummary } from '../../core/api/
 import { StationFilters, StationsService } from '../../core/services/stations.service';
 import { NotifyService } from '../../core/ui/notify.service';
 import { StationMap } from './station-map';
+import { AuthService } from '../../core/auth/auth.service';
 
 const NOVI_SAD = { latitude: 45.2551, longitude: 19.8451 };   // used when the browser can't share a location
 
@@ -28,6 +29,7 @@ export class StationList {
   private readonly stationsService = inject(StationsService);
   private readonly notify = inject(NotifyService);
   private readonly router = inject(Router);
+  protected readonly auth = inject(AuthService);
 
   protected readonly connectorTypes = CONNECTOR_TYPES;
   protected readonly stations = signal<StationSummary[]>([]);

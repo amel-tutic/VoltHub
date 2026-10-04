@@ -33,6 +33,12 @@
     <button mat-icon-button (click)="auth.logout()" aria-label="Log out" title="Log out"><mat-icon>logout</mat-icon></button>
   }
 </mat-toolbar>
+<!-- A fixed 4px slot, so the page doesn't jump when the bar appears. -->
+<div class="loading-slot">
+  @if (loading.active()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+</div>
 
 <main class="page">
   <router-outlet />

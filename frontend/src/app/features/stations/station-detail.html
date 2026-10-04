@@ -7,6 +7,16 @@
   </p>
   @if (s.description) { <p>{{ s.description }}</p> }
 
+  @if (auth.isStaff()) {
+    <div class="row">
+      <a mat-stroked-button [routerLink]="['/stations', s.id, 'edit']"><mat-icon>edit</mat-icon> Edit station</a>
+      <button mat-stroked-button (click)="addCharger()"><mat-icon>add</mat-icon> Add charger</button>
+      @if (s.chargers.length === 0) {
+        <button mat-button (click)="deleteStation()"><mat-icon>delete</mat-icon> Delete station</button>
+      }
+    </div>
+  }
+
   <h2>Chargers</h2>
   <div class="chargers">
     @for (charger of s.chargers; track charger.id) {

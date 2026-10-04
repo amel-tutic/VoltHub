@@ -7,10 +7,12 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { EMPTY, catchError, switchMap, timer } from 'rxjs';
 import { AuthService } from './core/auth/auth.service';
 import { NotificationsService } from './core/services/notifications.service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { LoadingService } from './core/ui/loading';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatToolbarModule, MatButtonModule, MatIconModule, MatBadgeModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatToolbarModule, MatButtonModule, MatIconModule, MatBadgeModule, MatProgressBarModule],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -18,6 +20,7 @@ import { NotificationsService } from './core/services/notifications.service';
 export class App {
   protected readonly auth = inject(AuthService);
   protected readonly notifications = inject(NotificationsService);
+  protected readonly loading = inject(LoadingService);
 
   constructor() {
     // After a page reload the tokens are still stored; fetch who we are for the toolbar.

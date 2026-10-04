@@ -7,12 +7,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Charger, ChargerStatus, OPERATOR_STATUSES, StationDetails } from '../../core/api/models';
 import { AuthService } from '../../core/auth/auth.service';
 import { StationsService } from '../../core/services/stations.service';
 import { NotifyService } from '../../core/ui/notify.service';
 import { StatusChip } from '../../core/ui/status-chip';
+import { AddChargerDialog, AddChargerDialogData } from './add-charger-dialog';
 import { ReportProblemDialog, ReportProblemDialogData } from './report-problem-dialog';
 import { ReserveDialog, ReserveDialogData } from './reserve-dialog';
 import { StationRatingsPanel } from './station-ratings';
@@ -31,6 +32,7 @@ export class StationDetail {
   private readonly stationsService = inject(StationsService);
   private readonly dialog = inject(MatDialog);
   private readonly notify = inject(NotifyService);
+  private readonly router = inject(Router);
   protected readonly auth = inject(AuthService);
 
   protected readonly operatorStatuses = OPERATOR_STATUSES;
@@ -74,6 +76,31 @@ export class StationDetail {
     const data: ReportProblemDialogData = { charger, stationName: station.name };
     this.dialog.open(ReportProblemDialog, { data, width: '520px' }).afterClosed().subscribe(sent => {
       if (sent) this.notify.success('Thank you. The operators have been notified.');
+    });
+  }
+
+  protected addCharger(): void {
+    const station = this.station();
+    if (!station) return;
+    const data: AddChargerDialogData = { stationId: station.id, stationName: station.name };
+    this.dialog.open(AddChargerDialog, { data, width: '520px' }).afterClosed().subscribe(added => {
+      if (added) {
+        this.notify.success('Charger added.');
+        this.load(station.id);
+      }
+    });
+  }
+
+  // The API refuses to delete a station that has chargers, so the button only shows for empty stations.
+  protected deleteStation(): void {
+    const station = this.station();
+    if (!station || !confirm(`Delete ${station.name}? This cannot be undone.`)) return;
+    this.stationsService.delete(station.id).subscribe({
+      next: () => {
+        this.notify.success('Station deleted.');
+        void this.router.navigateByUrl('/stations');
+      },
+      error: error => this.notify.error(error)
     });
   }
 

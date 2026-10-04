@@ -15,6 +15,7 @@ export type ProblemStatus = 'Open' | 'InProgress' | 'Resolved';
 export type NotificationType = 'MaintenanceDue' | 'ChargerOffline' | 'NewProblemReport';
 
 export const CONNECTOR_TYPES: ConnectorType[] = ['Type1', 'Type2', 'CCS', 'CHAdeMO', 'Tesla'];
+export const CURRENT_TYPES: CurrentType[] = ['AC', 'DC'];
 export const OPERATOR_STATUSES: ChargerStatus[] = ['Available', 'OutOfOrder', 'UnderMaintenance'];
 export const PAYMENT_METHODS: PaymentMethod[] = ['Card', 'EWallet', 'Subscription'];
 export const PROBLEM_TYPES: ProblemType[] = ['ChargingStartFailure', 'FaultyCable', 'OccupiedParkingSpot', 'Other'];
@@ -128,6 +129,10 @@ export interface RevenueReport {
 export interface FaultReport {
   chargerId: string; chargerCode: string; stationName: string; status: ChargerStatus; faults: number; openFaults: number; lastFaultAt: string | null;
 }
+
+// What an operator sends to create or edit a station (SSA 6.1) and to add a charger (SSA 6.2).
+export interface StationInput { name: string; address: string; city: string; latitude: number; longitude: number; description: string; }
+export interface ChargerInput { code: string; connectorType: ConnectorType; currentType: CurrentType; powerKw: number; pricePerKwh: number; }
 
 export interface CreatedResponse { id: string; }
 
