@@ -29,8 +29,8 @@ public static class DataSeeder
             ?? throw new InvalidOperationException("DevSeed:Password is not configured.");
 
         db.Users.AddRange(
-            User.Create("Admin", "VoltHub", "admin@volthub.local", passwordHasher.Hash(password), UserRole.Admin),
-            User.Create("Operator", "VoltHub", "operator@volthub.local", passwordHasher.Hash(password), UserRole.Operator));
+            User.Create("Admin", "VoltHub", "admin@volthub", passwordHasher.Hash(password), UserRole.Admin),
+            User.Create("Operator", "VoltHub", "operator@volthub", passwordHasher.Hash(password), UserRole.Operator));
         await db.SaveChangesAsync();
     }
 
