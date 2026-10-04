@@ -7,6 +7,8 @@
 <h1>{{ isEdit() ? 'Edit station' : 'New station' }}</h1>
 
 <mat-card appearance="outlined" class="item">
+  <!-- Fields on the left, the map on the right (one column on narrow screens). -->
+  <div class="station-layout">
   <form class="form" (submit)="onSubmit($event)" novalidate>
     <mat-form-field appearance="outline">
       <mat-label>Name</mat-label>
@@ -28,10 +30,9 @@
       <input matInput type="number" step="0.0001" [formField]="stationForm.latitude" />
       <mat-error>{{ stationForm.latitude().errors()[0]?.message }}</mat-error>
     </mat-form-field>
-    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-form-field appearance="outline">
       <mat-label>Longitude</mat-label>
       <input matInput type="number" step="0.0001" [formField]="stationForm.longitude" />
-      <mat-hint>On openstreetmap.org, right-click a place and choose "Show address" to see its coordinates.</mat-hint>
       <mat-error>{{ stationForm.longitude().errors()[0]?.message }}</mat-error>
     </mat-form-field>
     <mat-form-field appearance="outline">
@@ -46,4 +47,6 @@
       {{ isEdit() ? 'Save changes' : 'Create station' }}
     </button>
   </form>
+  <app-location-picker [latitude]="model().latitude" [longitude]="model().longitude" (picked)="setLocation($event)" />
+  </div>
 </mat-card>

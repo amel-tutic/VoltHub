@@ -1,0 +1,11 @@
+# Keep the build context small: build output, packages and git history are recreated inside the image.
+**/bin/
+**/obj/
+**/node_modules/
+frontend/dist/
+frontend/.angular/
+.git/
+.vs/
+.vscode/
+.idea/
+**/*.user

@@ -11,6 +11,7 @@ import { apiErrorMessage } from '../../core/api/api-error';
 import { StationInput } from '../../core/api/models';
 import { StationsService } from '../../core/services/stations.service';
 import { NotifyService } from '../../core/ui/notify.service';
+import { LocationPicker, MapPoint } from './location-picker';
 
 // A new station starts in the centre of Novi Sad; the operator moves the coordinates to the real spot.
 const NEW_STATION: StationInput = { name: '', address: '', city: '', latitude: 45.2551, longitude: 19.8451, description: '' };
@@ -18,8 +19,9 @@ const NEW_STATION: StationInput = { name: '', address: '', city: '', latitude: 4
 // SSA 6.1: one form for both creating (/stations/new) and editing (/stations/:id/edit) a station.
 @Component({
   selector: 'app-station-form',
-  imports: [FormField, RouterLink, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
+  imports: [FormField, RouterLink, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, LocationPicker],
   templateUrl: './station-form.html',
+  styleUrl: './station-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StationForm {
@@ -75,6 +77,11 @@ export class StationForm {
       }
       return undefined;
     });
+  }
+
+  // The map sends a clicked point; it goes into the form exactly like typed coordinates.
+  protected setLocation(point: MapPoint): void {
+    this.model.update(station => ({ ...station, ...point }));
   }
 
   private load(id: string): void {

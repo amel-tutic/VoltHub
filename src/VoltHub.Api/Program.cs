@@ -15,6 +15,10 @@ using VoltHub.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Hosting platforms (Render, Railway...) tell the app which port to listen on through the PORT variable.
+if (Environment.GetEnvironmentVariable("PORT") is { Length: > 0 } port)
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 // 1. The layers: use cases (Application) and database/security implementations (Infrastructure)
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -68,17 +72,31 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 
+// Hosted demo: create or update the database schema at startup (Database__MigrateOnStartup=true).
+if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
+    await DatabaseMigrator.MigrateAsync(app.Services);
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();   // https://localhost:<port>/scalar
-    await DataSeeder.SeedAsync(app.Services, app.Configuration);
 }
 
+// Demo accounts and stations: always in development; on the hosted demo when Seed__Enabled=true.
+if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("Seed:Enabled"))
+    await DataSeeder.SeedAsync(app.Services, app.Configuration);
+
 app.UseHttpsRedirection();
+app.UseDefaultFiles();     // "/" serves wwwroot/index.html: the Angular app, when the Docker image put it there
+app.UseStaticFiles();      // the Angular build's JavaScript, CSS and icons
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// Any other address (a refresh on /stations/42) returns the Angular app; its router shows the right page.
+// Unknown /api addresses still answer 404 instead of the app's HTML.
+app.MapFallback("api/{**path}", () => Results.NotFound());
+app.MapFallbackToFile("index.html");
 
 app.Run();
