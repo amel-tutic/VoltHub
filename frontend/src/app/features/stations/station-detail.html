@@ -50,6 +50,7 @@
               <input matInput type="number" min="0" step="0.5" #price [value]="charger.pricePerKwh" />
             </mat-form-field>
             <button mat-stroked-button (click)="changePrice(charger, price.valueAsNumber)">Set price</button>
+            <button mat-button (click)="removeCharger(charger)"><mat-icon>delete</mat-icon> Remove</button>
           </div>
         }
       </mat-card>

@@ -41,6 +41,11 @@ export class StationsService {
 
   // ---- Station management (SSA 6.1, 6.2), for operators and administrators
 
+  // Only a charger that was never used; the API answers 409 otherwise.
+  deleteCharger(chargerId: string) {
+    return this.http.delete<void>(`/api/chargers/${chargerId}`);
+  }
+
   create(station: StationInput) {
     return this.http.post<CreatedResponse>('/api/stations', this.toBody(station));
   }

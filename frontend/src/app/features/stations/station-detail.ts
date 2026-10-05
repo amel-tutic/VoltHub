@@ -91,6 +91,20 @@ export class StationDetail {
     });
   }
 
+  // Removes a charger added by mistake. A charger with history (reservations, maintenance, problem reports)
+  // stays: the API answers 409 and the message tells the operator to set it out of order instead.
+  protected removeCharger(charger: Charger): void {
+    const station = this.station();
+    if (!station || !confirm(`Remove charger ${charger.code}? Only a charger that was never used can be removed.`)) return;
+    this.stationsService.deleteCharger(charger.id).subscribe({
+      next: () => {
+        this.notify.success(`Charger ${charger.code} removed.`);
+        this.load(station.id);
+      },
+      error: error => this.notify.error(error)
+    });
+  }
+
   // The API refuses to delete a station that has chargers, so the button only shows for empty stations.
   protected deleteStation(): void {
     const station = this.station();
