@@ -47,6 +47,6 @@
       {{ isEdit() ? 'Save changes' : 'Create station' }}
     </button>
   </form>
-  <app-location-picker [latitude]="model().latitude" [longitude]="model().longitude" (picked)="setLocation($event)" />
+  <app-location-picker [latitude]="model().latitude" [longitude]="model().longitude" [stations]="otherStations()" (picked)="setLocation($event)" />
   </div>
 </mat-card>

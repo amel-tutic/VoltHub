@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, afterNextRender, effect, inject, input, output, viewChild } from '@angular/core';
 import * as L from 'leaflet';
+import { StationSummary } from '../../core/api/models';
 
 export interface MapPoint { latitude: number; longitude: number; }
 
@@ -17,9 +18,11 @@ export interface MapPoint { latitude: number; longitude: number; }
 export class LocationPicker {
   readonly latitude = input.required<number>();
   readonly longitude = input.required<number>();
+  readonly stations = input<StationSummary[]>([]);
   readonly picked = output<MapPoint>();
 
   private readonly host = viewChild.required<ElementRef<HTMLDivElement>>('mapHost');
+  private readonly existing = L.layerGroup();
   private map: L.Map | null = null;
   private pin: L.CircleMarker | null = null;
 
@@ -32,7 +35,9 @@ export class LocationPicker {
         maxZoom: 19,
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(this.map);
-      this.pin = L.circleMarker(start, { radius: 10, weight: 3, color: '#ffffff', fillColor: '#2e7d32', fillOpacity: 0.95 })
+      this.existing.addTo(this.map);
+      this.renderExisting(this.stations());
+      this.pin =L.circleMarker(start, { radius: 10, weight: 3, color: '#ffffff', fillColor: '#2e7d32', fillOpacity: 0.95 })
         .addTo(this.map);
       this.map.on('click', (event: L.LeafletMouseEvent) =>
         this.picked.emit({ latitude: round6(event.latlng.lat), longitude: round6(event.latlng.lng) }));
@@ -46,8 +51,26 @@ export class LocationPicker {
       if (!this.map.getBounds().contains(point)) this.map.panTo(point);
     });
 
+    effect(() => {
+      const stations = this.stations();
+      if (this.map) this.renderExisting(stations);
+    });
+
     inject(DestroyRef).onDestroy(() => this.map?.remove());
   }
+
+  private renderExisting(stations: StationSummary[]): void {
+    this.existing.clearLayers();
+    for (const station of stations) {
+      L.circleMarker([station.latitude, station.longitude], {
+        radius: 8, weight: 2, color: '#ffffff', fillColor: '#d32f2f', fillOpacity: 0.9
+      })
+        .bindTooltip(station.name)
+        .addTo(this.existing);
+    }
+    this.pin?.bringToFront();
+  }
+ 
 }
 
 // Six decimals is about 10 cm: precise enough, and tidy in the form.

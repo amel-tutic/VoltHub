@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { forkJoin } from 'rxjs';
 import { FaultReport, OverviewReport, RevenueReport, StationUsageReport } from '../../core/api/models';
 import { ReportPeriod, ReportsService } from '../../core/services/reports.service';
@@ -14,7 +15,7 @@ import { StatusChip } from '../../core/ui/status-chip';
 // SSA 9.1–9.4: the administrator's reports for a chosen period (the last 30 days by default).
 @Component({
   selector: 'app-reports',
-  imports: [DatePipe, DecimalPipe, MatCardModule, MatButtonModule, MatFormFieldModule, MatInputModule, StatusChip],
+  imports: [DatePipe, DecimalPipe, MatCardModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, StatusChip],
   templateUrl: './reports.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -34,6 +35,14 @@ export class Reports {
   // Bars are scaled to the largest value, so the biggest row fills the whole width.
   protected readonly maxDayRevenue = computed(() => Math.max(1, ...(this.revenue()?.byDay ?? []).map(d => d.revenue)));
   protected readonly maxUtilization = computed(() => Math.max(1, ...this.stations().map(s => s.utilizationPercent)));
+
+  protected readonly cities = computed(() => [...new Set(this.stations().map(s => s.city))].sort());
+  protected readonly city = signal('');
+  protected readonly selectedCity = computed(() => this.city() || this.cities()[0] || '');
+  protected readonly topInCity = computed(() => this.stations()
+    .filter(s => s.city === this.selectedCity())
+    .sort((a, b) => b.utilizationPercent - a.utilizationPercent)
+    .slice(0, 3));
 
   constructor() {
     this.load();

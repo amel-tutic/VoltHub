@@ -26,6 +26,26 @@
     </table>
   </div>
 
+  <h2>By charger</h2>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Station</th><th>Charger</th><th class="num">Sessions</th><th class="num">kWh</th><th class="num">RSD</th></tr></thead>
+      <tbody>
+        @for (charger of byCharger(); track charger.key) {
+          <tr>
+            <td>{{ charger.stationName }}</td>
+            <td>{{ charger.chargerCode }}</td>
+            <td class="num">{{ charger.sessions }}</td>
+            <td class="num">{{ charger.energyKwh | number: '1.1-1' }}</td>
+            <td class="num">{{ charger.cost | number: '1.0-0' }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5" class="empty">No completed sessions yet.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
   <h2>Where you charge most</h2>
   <div class="stack-list">
     @for (station of s.topStations; track station.stationId; let i = $index) {

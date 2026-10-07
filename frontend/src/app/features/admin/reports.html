@@ -82,6 +82,37 @@
   </table>
 </div>
 
+<h2>Most loaded chargers in a city</h2>
+<mat-form-field appearance="outline" subscriptSizing="dynamic">
+  <mat-label>City</mat-label>
+  <mat-select [value]="selectedCity()" (selectionChange)="city.set($event.value)">
+    @for (c of cities(); track c) {
+      <mat-option [value]="c">{{ c }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+<div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>#</th><th>Station</th><th class="num">Chargers</th><th class="num">Sessions per charger</th><th>Utilization</th></tr></thead>
+    <tbody>
+      @for (station of topInCity(); track station.stationId; let i = $index) {
+        <tr>
+          <td>{{ i + 1 }}.</td>
+          <td>{{ station.stationName }}</td>
+          <td class="num">{{ station.chargerCount }}</td>
+          <td class="num">{{ station.sessions / (station.chargerCount || 1) | number: '1.0-1' }}</td>
+          <td>
+            <div class="bar-track"><div class="bar" [style.width.%]="widthPercent(station.utilizationPercent, maxUtilization())"></div></div>
+            <span class="muted">{{ station.utilizationPercent | number: '1.0-2' }} %</span>
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="5" class="empty">No stations in this city.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>
+
 <h2>Faults by charger</h2>
 <div class="table-wrap">
   <table class="table">

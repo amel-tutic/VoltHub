@@ -21,7 +21,9 @@ describe('StationForm', () => {
   it('starts empty when creating a station', () => {
     const fixture = TestBed.createComponent(StationForm);
     fixture.detectChanges();
-    TestBed.inject(HttpTestingController).expectNone(() => true);   // nothing to load
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne(req => req.url === '/api/stations').flush([]);
+    http.verify();
     expect((fixture.componentInstance as unknown as StationFormInternals).model().name).toBe('');
   });
 

@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { apiErrorMessage } from '../../core/api/api-error';
-import { StationInput } from '../../core/api/models';
+import { StationInput, StationSummary } from '../../core/api/models';
 import { StationsService } from '../../core/services/stations.service';
 import { NotifyService } from '../../core/ui/notify.service';
 import { LocationPicker, MapPoint } from './location-picker';
@@ -49,7 +49,16 @@ export class StationForm {
   });
   protected readonly serverError = signal<string | null>(null);
 
+  private readonly stations = signal<StationSummary[]>([]);
+  protected readonly otherStations = computed(() => this.stations().filter(s => s.id !== this.id()));
+
   constructor() {
+    this.stationsService.search({ city: '', connectorType: '', onlyAvailable: false }).subscribe({
+      next: stations => this.stations.set(stations),
+      error: error => this.notify.error(error)
+    });
+
+
     // Edit mode: load the station and put its current values into the form.
     effect(() => {
       const id = this.id();
